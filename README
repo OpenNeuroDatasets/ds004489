@@ -1,0 +1,40 @@
+# **README** 
+**Data for Engaging in word recognition elicits highly specific modulations in visual cortex**
+
+This contains the raw and pre-processed fMRI data and structural images (T1) used in the article, "Engaging in word recognition elicits highly specific modulations in visual cortex." The preprint is here: [https://doi.org/10.1101/2022.10.10.511419](), and the article will be in press at Current Biology.  
+
+Additional processed data and analysis code are available here: [https://osf.io/yu8sw/ ]()
+
+### Participants
+
+15 volunteers (10 female) participated. Their ages ranged from 19 to 28 years (mean = 23.8), and 14 were right-handed. All had normal or corrected to normal vision, and no history of dyslexia or other cognitive disorders. All scored at or above the population norm of 100 on the TOWRE-II tests of sight word efficiency and phonemic decoding efficiency. One additional participant was excluded from the data set and analyes for falling asleep in nearly every scan and performing near chance even for stimuli at fixation. 
+
+### Equipment
+
+We acquired MRI data at the Center for Cognitive Neurobiological Imaging at Stanford University on a 3T GE Discovery MR750 scanner (GE Medical Systems) using a 32-channel head coil. In each session we collected one T1-weighted structural scan with 0.9 mm isotropic voxel size. We acquired functional data with a T2* sensitive gradient echo EPI sequence with a multiplexing (multiband) factor of 3 to acquire whole-brain coverage (51 slices). The TR was 1.19 s, TE was 30 ms and flip angle was 62deg. The voxel size was 2.4?mm isotropic.
+
+Via a mirror mounted above their nose, participants viewed the stimuli on an LCD screen (total viewing distance = 280 cm). The display had a resolution of 1920 x 1080 pixels, refreshing at 60 Hz. We presented the stimuli with custom MATLAB software (MathWorks, Natick, MA, USA) and the Psychophysics Toolbox. Throughout each scan we recorded monocular gaze position with an SR Research Eyelink 1000 tracker. Participants responded to the tasks by pressing two buttons on a response pad held in their right hand. 
+
+ 
+### Tasks
+The functional data in this repository as associated with three tasks: 
+
+1. **catLoc:** this was our functional localizer scan, used to localizer word- and face-selective regions of ventral occipito-temporal cortex in each participant?s native cortical surface. Participants viewed sequences of images from 4 different categories: faces, objects, letter strings, and false fonts. The letter strings were 5-letter real words, pseudowords, and consonant strings, each in two different fonts (Courier New and Sloan). For the false fonts, we used two different false characters matched in low-level visual features to the real fonts: a pseudo-Courier, and a pseudo-Sloan. Each 4-second trial was composed of 4 frames presented in rapid sequence. Each frame contained images of three items from that trial's category. The participant performed two different tasks in separate 5-minute scans: a fixation color task (press a button when the fixation dot changed color), and one-back task (press a button when the stimulus images repeat). Which task the subject was doing is indicated by the "taskName" column in the events.tsv files ("oneback" or "fixation"). The stimulus category on each trial is indicated by the trial_type column.  
+2. **Retinotopy:** These scans were used to map the borders of retinotopic regions (V1-hV4, VO) in each participants native cortical surface. The participant fixated on a central spot while viewing a bar that moved across the visual field 73. The bar moved in 8 different directions, taking 32 s to cross the screen each time. The bar contained high-contrast patterns including faces and words, which changed 5 times per second. The participant?s task was to maintain central fixation and press a button whenever the fixation dot changed color.
+3. **FOV:** This was the "main experiment." FOV stands for "Field of view." Each 4-s trial was composed of one stimulus, a letter or shape string, presented for 150 ms, followed by a 3850 ms interval during which the subject could press a button to respond, followed immediately by the next trial. Trials came in blocks of 6. The stimulus type was constant within each block but varied randomly from block to block. Between blocks were blank periods of rest (no task except fixation on the dot), lasting 4, 6, or 8 seconds (randomly assigned). 
+The participant performed three different tasks at different times. Half of the runs (scans lasting ~6 minutes) were "attend-fixation" and half were "attend-stimuli." This is indicated by the "taskName" column in the events.tsv files ("AttndStim" or "AttndFix"). During "attend-fixation" runs, the participants ignored the letter and shape strings and performed the fixation task. The task was to press one of two keys to report whether or not the fixation dot turned red. The saturation of the red color (in HSV space) was controlled by a staircase to converge on the 80% correct detection threshold. 
+During the "attend-stimuli" runs, participants made judgments of the shape or letter strings while maintaining fixation on the dot but ignoring changes in its color. During blocks of trials with shape strings, the participant performed the gap task: to report whether the gap was on the top or bottom side. During blocks of trials with letter strings, the participant performed the lexical decision task: to report whether the presented letter string was a real word (e.g., book) or a pseudoword (e.g., blus). The task-irrelevant changes in fixation dot color were replayed from the staircases in fixation task runs. 
+
+The raw data is in the outer level of the directory. We used fMRIPrep v 20.2.1 to pre-process the data, and the outputs of that are in the **derivatives** folder. Inside the derivatives folder is **sourcedata/freesurfer**, which has FreeSurfer directories for each subject, and fsaverage. The /label/ folder for each subject has their individual ROIs. 
+
+In addition, each subject's derivatives/sib-xxx/ folder contains three other folders with processed outputs for each task. 
+(1) derivatives/sib-xxx/catLoc contains a .mat file with results of glmDenoise, giving beta weights fo the response to each image category. It also contains .mgz files which are surface maps on the native surface of the t-statistic for contrasts between image categories. These were used to draw ROIs. 
+(2) derivatives/sib-xxx/FOV/ contains two .mat files with results of glmSingle to get single-trial beta weights. 
+(3) derivatives/sib-xxx/Retinotopy/ contains the results of running analyzePRF on the retinotopy scans to estimate, for each surface vertex, the population receptive field polar angle ("ang"), eccentricity ("ecc"), size ("rfsize"), exponent "expt", and gain. For each of those metrics there is a cortical surface map as a .mgz file, both both hemispheres (lh and rh), along with the R-Squared metric for the PRF fits ("R2"). 
+
+### ISSUES AND EXCLUDED RUNS
+
+Not all participants completed all runs. We intended for each participant to compete 4 runs of the "catLoc" localizer, but one subject (562) only finished three. We also intended for each participant to complete 8 runs of the main "FOV" experiment, but one subject completed only 6 (sub-1014) and two completed only 7 (sub-628 and sub-835). 
+Additionally, all subjects but one came for two sessions, but one subject (sub-562) came for a third to complete all the main experiment runs. 
+
+In addition, we excluded from the analysis runs in which any framewise displacement due to head motion exceeded 2.4 mm (1 voxel). This applied to 4 scans from 1 subject and 3 scans from a second subject. Specifically, for subject 505, we excluded FOV runs 2, 4, 6 and 7 (from their second session). For subject 821, we excluded FOV runs 4, 5 and 6 from their second session. Those runs were excluded from the analysis but *are* included in this data set. 
